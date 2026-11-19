@@ -39,3 +39,11 @@
 
 Основная проверка: `yarn build`.
 Локальная инфраструктура: `docker compose up -d`.
+
+## Деплой
+
+- Исходники и Yarn root находятся в `code/`; команды выполнять оттуда.
+- Dockerfile, `.github/` CI и `helm/` находятся в корне. Рабочая ветка `development`, выпуск `master`.
+- CI публикует проверенный image и Helm OCI-пакет среды; Argo автоматически отслеживает dev-пакеты. Prod публикуется только ручным release workflow.
+- ConfigMap монтирует `/app/.env`, credentials поступают только из Secret refs. Одна реплика, внутренний порт 8080.
+- Ingress публикует только `/images`. `/internal/objects` доступен gateway по внутреннему Service. MinIO credentials ограничены бакетом sellgar.

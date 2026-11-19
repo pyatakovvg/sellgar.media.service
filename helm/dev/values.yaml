@@ -1,0 +1,21 @@
+replicas: 1
+configmaps:
+- nameOverride: media-service-env
+  enabled: true
+  filename: .env
+  data: |
+    PORT=8080
+    ORIGINS=http://dev.sellgar.io
+    AMQP_HOSTNAME=rabbitmq
+    AMQP_PORT=5672
+    AMQP_FILE_SRV_COMMAND_QUEUE=file_srv.service.queue
+    AMQP_MEDIA_SRV_COMMAND_QUEUE=media_srv.command.queue
+    AMQP_EVENTS_EXCHANGE=event.exchange
+    AMQP_MEDIA_SRV_EVENT_QUEUE=media_srv.event.queue
+    AMQP_MEDIA_OBJECT_WRITE=media.object.write
+    AMQP_MEDIA_OBJECT_DELETE=media.object.delete
+    MINIO_ENDPOINT=minio
+    MINIO_PORT=9000
+    MINIO_BUCKET=sellgar
+ingress:
+  host: dev.sellgar.io

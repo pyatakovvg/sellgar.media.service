@@ -1,3 +1,4 @@
+import { HealthModule } from './health/health.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
@@ -7,8 +8,9 @@ import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
+    HealthModule,
     ConfigModule.forRoot({
-      envFilePath: ['services/media_srv/.env', './.env'],
+      envFilePath: '.env',
       cache: true,
       isGlobal: true,
     }),

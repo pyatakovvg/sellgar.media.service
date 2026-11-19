@@ -4,14 +4,16 @@ import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
+import { HealthService } from './health/health.service';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const logger = new Logger();
   const app: NestExpressApplication = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
   const config = app.get<ConfigService>(ConfigService);
   const origins = config.get<string>('ORIGINS')?.split(';') ?? [];
-  const port = config.get<number>('PORT');
+  const port = Number(config.get('PORT') ?? 8080);
 
   app.enableCors({
     credentials: false,
@@ -19,7 +21,7 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
-  app.connectMicroservice<MicroserviceOptions>({
+  const commands = app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
       urls: [
@@ -38,6 +40,8 @@ async function bootstrap() {
     },
   });
 
+  const health = app.get(HealthService);
+  commands.status.subscribe((status) => health.setConsumerConnected(status === 'connected' || status === 'unblocked'));
   await app.startAllMicroservices();
 
   await app.listen(port, () => {

@@ -1,0 +1,73 @@
+image:
+  repository: ghcr.io/pyatakovvg/sellgar.media.service
+imagePullSecrets:
+- name: ghcr-pull
+applicationPort: 8080
+env:
+  AMQP_USERNAME:
+    valueFrom:
+      secretKeyRef:
+        name: rabbitmq-default-user
+        key: username
+  AMQP_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: rabbitmq-default-user
+        key: password
+  MINIO_ACCESS_KEY:
+    valueFrom:
+      secretKeyRef:
+        name: media-storage
+        key: username
+  MINIO_SECRET_KEY:
+    valueFrom:
+      secretKeyRef:
+        name: media-storage
+        key: password
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+volumeMounts:
+- name: environment
+  mountPath: /app/.env
+  subPath: .env
+  readOnly: true
+- name: temporary-files
+  mountPath: /tmp
+volumes:
+- name: environment
+  configMap:
+    name: media-service-env
+- name: temporary-files
+  emptyDir:
+    sizeLimit: 32Mi
+probes:
+  startup:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 2
+    failureThreshold: 90
+  readiness:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 5
+  liveness:
+    tcpSocket:
+      port: http
+    periodSeconds: 10
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 512Mi
+ingress:
+  enabled: true
+  className: traefik
+  path: /images
+  stripPrefix: false
+migration:
+  enabled: false

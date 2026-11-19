@@ -47,6 +47,6 @@ import { StorageController } from './storage.controller';
   ],
   controllers: [StorageController],
   providers: [MinioStorageRepository],
-  exports: [MinioStorageRepository],
+  exports: [MinioStorageRepository, MinioModule],
 })
 export class StorageModule {}
