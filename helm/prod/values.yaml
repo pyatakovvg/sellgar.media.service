@@ -1,2 +1,4 @@
 replicas: 1
 configmaps: []
+ingress:
+  host: cdn.sellgar.ru

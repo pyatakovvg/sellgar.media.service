@@ -14,9 +14,9 @@ configmaps:
     AMQP_MEDIA_SRV_EVENT_QUEUE=media_srv.event.queue
     AMQP_MEDIA_OBJECT_WRITE=media.object.write
     AMQP_MEDIA_OBJECT_DELETE=media.object.delete
-    MINIO_ENDPOINT=minio
-    MINIO_PORT=9000
+    MINIO_ENDPOINT=seaweedfs-all-in-one
+    MINIO_PORT=8333
     MINIO_BUCKET=sellgar
 ingress:
-  host: dev.sellgar.ru
+  host: cdn.dev.sellgar.ru
   tlsSecretName: sellgar-dev-tls
